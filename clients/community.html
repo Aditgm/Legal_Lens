@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Stories - Legal Lens</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Share your journey, support others, and be part of a safe community for women's safety and legal awareness.">
+    <meta name="theme-color" content="#673ab7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Legal Lens">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/images/icon-192x192.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/community.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="community-header">
+        <nav class="navbar">
+            <div class="logo">
+                <img src="assets/images/legallens-logo.png" alt="LegalLens Logo" class="logo-image">
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html#about">About</a></li>
+                <li><a href="index.html#resources">Resources</a></li>
+                <li><a href="community.html" class="active">Community</a></li>
+                <li><a href="chat.html" class="btn-chat">Chat Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="community-hero">
+        <div class="container">
+            <h1>💪 Community Stories</h1>
+            <p class="hero-subtitle">Share your journey, inspire others, and build a supportive community</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-stories">127</div>
+                    <div class="stat-label">Stories Shared</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-support">2,450</div>
+                    <div class="stat-label">Support Given</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Anonymous</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="community-main">
+        <div class="container">
+            <!-- Share Your Story Section -->
+            <section class="share-section">
+                <div class="section-header">
+                    <h2>Share Your Story</h2>
+                    <p>Your voice matters. Share anonymously and help others feel less alone.</p>
+                </div>
+                
+                <form class="story-form" id="story-form">
+                    <div class="form-group">
+                        <label for="story-category">Story Type</label>
+                        <select id="story-category" required>
+                            <option value="">Select a category...</option>
+                            <option value="success">Success Story</option>
+                            <option value="seeking-help">Seeking Help</option>
+                            <option value="awareness">Awareness</option>
+                            <option value="legal-victory">Legal Victory</option>
+                            <option value="workplace">Workplace Experience</option>
+                            <option value="support">Offering Support</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story-title">Title</label>
+                        <input type="text" id="story-title" placeholder="Give your story a title..." maxlength="100" required>
+                        <span class="char-count"><span id="title-count">0</span>/100</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story-content">Your Story</label>
+                        <textarea id="story-content" rows="8" placeholder="Share your experience... You can remain completely anonymous." maxlength="2000" required></textarea>
+                        <span class="char-count"><span id="content-count">0</span>/2000</span>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="anonymous-post" checked>
+                            <span>Post anonymously (recommended for safety)</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group" id="name-group" style="display: none;">
+                        <label for="author-name">Display Name (optional)</label>
+                        <input type="text" id="author-name" placeholder="How would you like to be known?">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="clear-btn">Clear</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span>Share Story</span>
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M2 8L14 2L8 14L6 9L2 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Filter and Sort Section -->
+            <section class="filter-section">
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label>Filter by:</label>
+                        <select id="filter-category">
+                            <option value="all">All Stories</option>
+                            <option value="success">Success Stories</option>
+                            <option value="seeking-help">Seeking Help</option>
+                            <option value="awareness">Awareness</option>
+                            <option value="legal-victory">Legal Victory</option>
+                            <option value="workplace">Workplace</option>
+                            <option value="support">Support</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Sort by:</label>
+                        <select id="sort-by">
+                            <option value="recent">Most Recent</option>
+                            <option value="popular">Most Supported</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <input type="text" id="search-stories" placeholder="Search stories...">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stories Display Section -->
+            <section class="stories-section">
+                <div class="section-header">
+                    <h2>Community Stories</h2>
+                    <p id="stories-count">Showing all stories</p>
+                </div>
+                
+                <div class="stories-grid" id="stories-container">
+                    <!-- Stories will be dynamically loaded here -->
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading stories...</p>
+                    </div>
+                </div>
+
+                <div class="load-more-section" style="display: none;">
+                    <button class="btn btn-secondary" id="load-more-btn">Load More Stories</button>
+                </div>
+            </section>
+
+            <!-- Support Resources -->
+            <section class="resources-banner">
+                <div class="banner-content">
+                    <h3>Need Immediate Help?</h3>
+                    <p>If you're in danger or need immediate assistance, please reach out to these resources:</p>
+                    <div class="emergency-contacts">
+                        <a href="tel:1091" class="emergency-btn">Women Helpline: 1091</a>
+                        <a href="tel:100" class="emergency-btn">Police: 100</a>
+                        <a href="tel:7827170170" class="emergency-btn">NCW Helpline: 7827170170</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="community-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Community Guidelines</h4>
+                    <ul>
+                        <li>Be respectful and supportive</li>
+                        <li>Protect your privacy</li>
+                        <li>No hate speech or discrimination</li>
+                        <li>Share responsibly</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal Lens</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="chat.html">Chat Assistant</a></li>
+                        <li><a href="index.html#about">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <p>Your safety and well-being matter. This is a safe space to share and seek support.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Legal Lens. Empowering women through knowledge and community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <span class="icon">🌙</span>
+    </button>
+
+    <!-- Success Toast -->
+    <div class="toast" id="success-toast">
+        <svg class="toast-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M6 10L9 13L14 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span class="toast-message">Story shared successfully!</span>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/community.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>
