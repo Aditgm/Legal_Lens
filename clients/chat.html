@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Legal Lens</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Chat with our AI legal assistant about women's safety laws, POSH Act, and legal rights.">
+    <meta name="theme-color" content="#673ab7">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Legal Lens">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="assets/images/icon-192x192.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--bg-body);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 900px;
+            height: 600px;
+            background: var(--chat-bg);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            flex: 1;
+        }
+
+        .fir-button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .fir-button:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .fir-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .fir-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fir-lang-select {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #667eea;
+            border: 2px solid white;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .fir-lang-select:hover {
+            background: white;
+            transform: translateY(-1px);
+        }
+
+        .fir-lang-select option {
+            background: white;
+            color: #333;
+        }
+
+        .fir-status {
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            margin-top: 5px;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .chat-box {
+            background: rgba(26, 32, 44, 0.5);
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        [data-theme="dark"] .chat-box::-webkit-scrollbar-track {
+            background: rgba(45, 55, 72, 0.5);
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        [data-theme="dark"] .chat-box::-webkit-scrollbar-thumb {
+            background: #9f7aea;
+        }
+
+        .chat-message {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 10px;
+            flex-shrink: 0;
+        }
+
+        .user-message .message-avatar {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 15px 20px;
+            border-radius: 15px;
+            background: var(--message-bot-bg);
+            color: var(--message-bot-text);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .message-content p {
+            margin: 0 0 10px 0;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-content strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .message-content strong {
+            color: #b794f4;
+        }
+
+        .message-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin: 5px 0;
+            color: #4a5568;
+        }
+
+        [data-theme="dark"] .message-content li {
+            color: var(--text-gray);
+        }
+
+        .message-content .numbered-item {
+            margin: 8px 0;
+            padding-left: 5px;
+        }
+
+        .message-content .number {
+            color: #667eea;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .user-message .message-content {
+            background: var(--message-user-bg);
+            color: white;
+        }
+
+        .user-message .message-content strong {
+            color: #ffd89b;
+        }
+
+        .message-timestamp {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .typing-indicator .message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 15px 20px;
+            align-items: flex-start;
+        }
+
+        .typing-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .typing-animation {
+            display: flex;
+            gap: 5px;
+        }
+
+        .typing-indicator .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .typing-text {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-style: italic;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        [data-theme="dark"] .chat-input {
+            background: rgba(45, 55, 72, 0.8);
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid var(--input-border);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #message-input:focus {
+            border-color: #667eea;
+        }
+
+        #send-button {
+            margin-left: 10px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        #send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #send-button:active {
+            transform: translateY(0);
+        }
+
+        /* Language Selector */
+        .language-selector {
+            padding: 15px 20px;
+            border: 2px solid var(--input-border);
+            background: var(--bg-white);
+            color: var(--text-dark);
+            border-radius: 25px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s, background 0.3s ease, color 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .language-selector:focus {
+            border-color: #667eea;
+        }
+
+        [data-theme="dark"] .language-selector:focus {
+            border-color: #9f7aea;
+        }
+
+        .language-selector option {
+            background: var(--bg-white);
+            color: var(--text-dark);
+        }
+
+        /* Voice Button */
+        .voice-button {
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .voice-button:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .voice-button.recording {
+            background: #f56565;
+            border-color: #f56565;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        [data-theme="dark"] .voice-button {
+            background: rgba(159, 122, 234, 0.1);
+            border-color: #9f7aea;
+            color: #b794f4;
+        }
+
+        [data-theme="dark"] .voice-button:hover {
+            background: #9f7aea;
+            color: white;
+        }
+
+        /* Back button */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+            color: #667eea;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .chat-header h1 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.3s;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: #2d3748;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .modal-body {
+            background: #2d3748;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-section h3 {
+            color: #667eea;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-section h3 {
+            color: #b794f4;
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-group label {
+            color: #e2e8f0;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: border-color 0.3s, background 0.3s ease, color 0.3s ease;
+        }
+
+        [data-theme="dark"] .form-group input,
+        [data-theme="dark"] .form-group textarea {
+            background: #374151;
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        [data-theme="dark"] .form-group input:focus,
+        [data-theme="dark"] .form-group textarea:focus {
+            border-color: #9f7aea;
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px 30px;
+            background: #f9f9f9;
+            border-radius: 0 0 20px 20px;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .modal-actions {
+            background: rgba(45, 55, 72, 0.6);
+        }
+
+        .modal-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-email {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-email:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .email-section {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+        }
+
+        [data-theme="dark"] .email-section {
+            background: rgba(55, 65, 81, 0.5);
+        }
+
+        [data-theme="dark"] .email-section h3 {
+            color: #93c5fd !important;
+        }
+
+        .email-section input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #cce5ff;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        [data-theme="dark"] .email-section input {
+            background: #374151;
+            border-color: #4a5568;
+            color: #e2e8f0;
+        }
+
+        [data-theme="dark"] .email-section small {
+            color: #cbd5e0 !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Home</a>
+    <a href="community.html" class="back-btn" style="left: 140px; background: rgba(159, 122, 234, 0.15); color: #9f7aea; border: 2px solid #9f7aea;">Community</a>
+    
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>🛡️ Women's Safety Legal Assistant</h1>
+                    <p style="margin: 5px 0 0 0; font-size: 0.9rem; opacity: 0.9;">Ask about POSH Act & IPC - Supports Hindi, Marathi, Tamil & more!</p>
+                </div>
+                <div class="fir-controls">
+                    <select id="fir-language" class="fir-lang-select" title="FIR Language">
+                        <option value="en">🇬🇧 English</option>
+                        <option value="hi">🇮🇳 हिंदी (Hindi)</option>
+                        <option value="mr">🇮🇳 मराठी (Marathi)</option>
+                        <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+                        <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+                        <option value="bn">🇮🇳 বাংলা (Bengali)</option>
+                        <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
+                        <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+                        <option value="ml">🇮🇳 മലയാളം (Malayalam)</option>
+                        <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
+                    </select>
+                    <button id="generate-fir-btn" class="fir-button">
+                        📄 Generate FIR Draft
+                    </button>
+                </div>
+            </div>
+            <div id="fir-status" class="fir-status" style="display: none;"></div>
+        </header>
+        <div class="chat-box" id="chat-box">
+            <!-- Chat messages will be dynamically inserted here -->
+        </div>
+        <div class="chat-input">
+            <select id="language-selector" class="language-selector" title="Select your language">
+                <option value="auto">🌐 Auto-detect</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="hi">🇮🇳 हिंदी (Hindi)</option>
+                <option value="mr">🇮🇳 मराठी (Marathi)</option>
+                <option value="ta">🇮🇳 தமிழ் (Tamil)</option>
+                <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+                <option value="bn">🇮🇳 বাংলা (Bengali)</option>
+                <option value="gu">🇮🇳 ગુજરાતી (Gujarati)</option>
+                <option value="kn">🇮🇳 ಕನ್ನಡ (Kannada)</option>
+                <option value="ml">🇮🇳 മലയാളം (Malayalam)</option>
+                <option value="pa">🇮🇳 ਪੰਜਾਬੀ (Punjabi)</option>
+            </select>
+            <button id="voice-button" class="voice-button" title="Click to speak">🎤</button>
+            <input type="text" id="message-input" placeholder="Ask about POSH Act, IPC, or women's safety laws..." />
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+    
+    <div class="magnifier" id="magnifier"></div>
+
+    <!-- FIR Preview Modal -->
+    <div id="fir-preview-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2> FIR Draft Preview</h2>
+                <button class="close-modal" onclick="closeFIRModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-section">
+                    <h3>👤 Complainant Details</h3>
+                    <div class="form-group">
+                        <label>Full Name:</label>
+                        <input type="text" id="edit-complainant-name" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Address:</label>
+                        <textarea id="edit-complainant-address" placeholder="Enter your complete address"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number:</label>
+                        <input type="tel" id="edit-complainant-phone" placeholder="e.g., 9876543210">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📅 Incident Details</h3>
+                    <div class="form-group">
+                        <label>Date of Incident:</label>
+                        <input type="date" id="edit-incident-date">
+                    </div>
+                    <div class="form-group">
+                        <label>Time of Incident:</label>
+                        <input type="time" id="edit-incident-time">
+                    </div>
+                    <div class="form-group">
+                        <label>Location of Incident:</label>
+                        <input type="text" id="edit-incident-location" placeholder="Where did it happen?">
+                    </div>
+                    <div class="form-group">
+                        <label>Type of Harassment:</label>
+                        <input type="text" id="edit-harassment-type" placeholder="e.g., Sexual Harassment, Stalking">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>⚠️ Accused Details</h3>
+                    <div class="form-group">
+                        <label>Name of Accused:</label>
+                        <input type="text" id="edit-accused-name" placeholder="If known">
+                    </div>
+                    <div class="form-group">
+                        <label>Description of Accused:</label>
+                        <textarea id="edit-accused-description" placeholder="Physical description, age, clothing, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Incident Description</h3>
+                    <div class="form-group">
+                        <label>Detailed Description:</label>
+                        <textarea id="edit-incident-description" rows="6" placeholder="Describe what happened in detail"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Witnesses & Evidence</h3>
+                    <div class="form-group">
+                        <label>Witnesses:</label>
+                        <textarea id="edit-witnesses" placeholder="Names and contact details of witnesses"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Evidence/Documents:</label>
+                        <textarea id="edit-evidence" placeholder="List any evidence you have"></textarea>
+                    </div>
+                </div>
+
+                <div class="email-section">
+                    <h3 style="margin-top: 0; color: #007bff;">📧 Email Options</h3>
+                    <div class="form-group">
+                        <label>Your Email Address (optional):</label>
+                        <input type="email" id="user-email" placeholder="your.email@example.com">
+                        <small style="color: #666; display: block; margin-top: 5px;">Receive a copy of your FIR draft</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-secondary" onclick="closeFIRModal()">✕ Cancel</button>
+                <button class="modal-btn btn-email" onclick="emailFIR()">📧 Email FIR</button>
+                <button class="modal-btn btn-primary" onclick="downloadFIRFromModal()">📥 Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <span class="icon">🌙</span>
+    </button>
+
+    <script src="js/theme.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/fir-modal.js"></script>
+    <script src="js/magnifier.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>
