@@ -1,0 +1,114 @@
+{
+  "name": "Legal Lens - Women's Safety Legal Assistant",
+  "short_name": "Legal Lens",
+  "description": "AI-powered legal assistance for women's safety, POSH Act compliance, and legal rights",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#673ab7",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "assets/images/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/images/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "social", "utilities"],
+  "screenshots": [
+    {
+      "src": "assets/images/screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/images/screenshot2.png",
+      "sizes": "540x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Chat Now",
+      "short_name": "Chat",
+      "description": "Start a chat with the legal assistant",
+      "url": "/chat.html",
+      "icons": [
+        {
+          "src": "assets/images/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Community",
+      "short_name": "Community",
+      "description": "View community stories",
+      "url": "/community.html",
+      "icons": [
+        {
+          "src": "assets/images/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Emergency",
+      "short_name": "Emergency",
+      "description": "Emergency contacts and help",
+      "url": "/index.html#resources",
+      "icons": [
+        {
+          "src": "assets/images/icon-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
