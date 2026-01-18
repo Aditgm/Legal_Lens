@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Legal Lens</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Sign in to Legal Lens - Your trusted legal assistant">
+    <meta name="theme-color" content="#673ab7">
+    <link rel="manifest" href="manifest.json">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Animated Background -->
+        <div class="auth-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <!-- Auth Card -->
+        <div class="auth-card" id="authCard">
+            <!-- Logo -->
+            <div class="auth-logo">
+                <img src="assets/images/legallens-logo.png" alt="LegalLens Logo" class="auth-logo-image">
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" id="loginTab">Sign In</button>
+                <button class="auth-tab" data-tab="register" id="registerTab">Create Account</button>
+                <div class="tab-indicator"></div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M3 6L10 11L17 6M3 6V14C3 14.5523 3.44772 15 4 15H16C16.5523 15 17 14.5523 17 14V6M3 6C3 5.44772 3.44772 5 4 5H16C16.5523 5 17 5.44772 17 6" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="email" id="loginEmail" placeholder="your.email@example.com" required autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 9V6C5 3.79086 6.79086 2 9 2H11C13.2091 2 15 3.79086 15 6V9M4 9H16C16.5523 9 17 9.44772 17 10V17C17 17.5523 16.5523 18 16 18H4C3.44772 18 3 17.5523 3 17V10C3 9.44772 3.44772 9 4 9Z" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                        <button type="button" class="toggle-password" data-target="loginPassword">
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 6C6 6 3 10 3 10C3 10 6 14 10 14C14 14 17 10 17 10C17 10 14 6 10 6Z" stroke="currentColor" stroke-width="1.5"/>
+                                <circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkbox-custom"></span>
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <span>Sign In</span>
+                    <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+
+                <div class="social-auth">
+                    <button type="button" class="social-btn google">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path d="M18.17 8.365h-8.44v3.29h4.84c-.46 2.28-2.48 3.99-4.84 3.99a5.33 5.33 0 1 1 3.77-9.1l2.32-2.33a8.89 8.89 0 1 0-6.09 15.59c4.86 0 8.89-3.59 8.89-8.89 0-.59-.07-1.17-.18-1.73z" fill="#4285F4"/>
+                        </svg>
+                        <span>Google</span>
+                    </button>
+                    <button type="button" class="social-btn microsoft">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path fill="#F25022" d="M2 2h7v7H2z"/>
+                            <path fill="#7FBA00" d="M11 2h7v7h-7z"/>
+                            <path fill="#00A4EF" d="M2 11h7v7H2z"/>
+                            <path fill="#FFB900" d="M11 11h7v7h-7z"/>
+                        </svg>
+                        <span>Microsoft</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="registerName">Full Name</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 10C12.2091 10 14 8.20914 14 6C14 3.79086 12.2091 2 10 2C7.79086 2 6 3.79086 6 6C6 8.20914 7.79086 10 10 10Z" stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M4 18C4 15.7909 5.79086 14 8 14H12C14.2091 14 16 15.7909 16 18" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="text" id="registerName" placeholder="Full Name" required autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M3 6L10 11L17 6M3 6V14C3 14.5523 3.44772 15 4 15H16C16.5523 15 17 14.5523 17 14V6M3 6C3 5.44772 3.44772 5 4 5H16C16.5523 5 17 5.44772 17 6" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="email" id="registerEmail" placeholder="your.email@example.com" required autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 9V6C5 3.79086 6.79086 2 9 2H11C13.2091 2 15 3.79086 15 6V9M4 9H16C16.5523 9 17 9.44772 17 10V17C17 17.5523 16.5523 18 16 18H4C3.44772 18 3 17.5523 3 17V10C3 9.44772 3.44772 9 4 9Z" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="password" id="registerPassword" placeholder="••••••••" required autocomplete="new-password">
+                        <button type="button" class="toggle-password" data-target="registerPassword">
+                            <svg class="eye-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 6C6 6 3 10 3 10C3 10 6 14 10 14C14 14 17 10 17 10C17 10 14 6 10 6Z" stroke="currentColor" stroke-width="1.5"/>
+                                <circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="password-strength" id="passwordStrength">
+                        <div class="strength-bar">
+                            <div class="strength-fill"></div>
+                        </div>
+                        <span class="strength-text">Password strength</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M5 9V6C5 3.79086 6.79086 2 9 2H11C13.2091 2 15 3.79086 15 6V9M4 9H16C16.5523 9 17 9.44772 17 10V17C17 17.5523 16.5523 18 16 18H4C3.44772 18 3 17.5523 3 17V10C3 9.44772 3.44772 9 4 9Z" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        <input type="password" id="confirmPassword" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+                </div>
+
+                <label class="checkbox-wrapper">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <span class="checkbox-custom"></span>
+                    <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+                </label>
+
+                <button type="submit" class="btn-submit">
+                    <span>Create Account</span>
+                    <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+
+                <div class="divider">
+                    <span>or sign up with</span>
+                </div>
+
+                <div class="social-auth">
+                    <button type="button" class="social-btn google">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path d="M18.17 8.365h-8.44v3.29h4.84c-.46 2.28-2.48 3.99-4.84 3.99a5.33 5.33 0 1 1 3.77-9.1l2.32-2.33a8.89 8.89 0 1 0-6.09 15.59c4.86 0 8.89-3.59 8.89-8.89 0-.59-.07-1.17-.18-1.73z" fill="#4285F4"/>
+                        </svg>
+                        <span>Google</span>
+                    </button>
+                    <button type="button" class="social-btn microsoft">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <path fill="#F25022" d="M2 2h7v7H2z"/>
+                            <path fill="#7FBA00" d="M11 2h7v7h-7z"/>
+                            <path fill="#00A4EF" d="M2 11h7v7H2z"/>
+                            <path fill="#FFB900" d="M11 11h7v7h-7z"/>
+                        </svg>
+                        <span>Microsoft</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Back to Home -->
+            <div class="auth-footer">
+                <a href="index.html" class="back-home">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="authToast">
+            <svg class="toast-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
+                <path d="M6 10L9 13L14 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="toast-message"></span>
+        </div>
+    </div>
+
+    <script src="js/theme.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>
