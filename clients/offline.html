@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Legal Lens</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .offline-container {
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .offline-icon {
+            font-size: 6rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .offline-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .offline-info h2 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .offline-info ul {
+            list-style: none;
+            text-align: left;
+            margin-top: 1rem;
+        }
+
+        .offline-info li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .emergency-contacts {
+            background: rgba(245, 101, 101, 0.2);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .emergency-contacts h3 {
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .contact-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0.5rem;
+            background: white;
+            color: #f56565;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .retry-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .offline-icon {
+                font-size: 4rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <svg class="offline-icon" width="80" height="80" viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="40" r="35" stroke="#667eea" stroke-width="3" fill="none"/>
+            <path d="M25 45L40 30L55 45" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+            <line x1="40" y1="50" x2="40" y2="60" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your internet connection. Don't worry, some features still work!</p>
+
+        <div class="offline-info">
+            <h2>Available Offline</h2>
+            <ul>
+                <li>
+                    <span>View previously loaded community stories</span>
+                </li>
+                <li>
+                    <span>Access emergency contact numbers</span>
+                </li>
+                <li>
+                    <span>Read cached legal information</span>
+                </li>
+                <li>
+                    <span>Draft FIR documents (saved locally)</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="emergency-contacts">
+            <h3>Emergency Contacts</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 1rem;">These numbers work even without internet</p>
+            <a href="tel:1091" class="contact-btn">Women Helpline: 1091</a>
+            <a href="tel:100" class="contact-btn">Police: 100</a>
+            <a href="tel:7827170170" class="contact-btn">NCW: 7827170170</a>
+        </div>
+
+        <a href="/" class="retry-btn" onclick="window.location.reload(); return false;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10C4 13.3137 6.68629 16 10 16C13.3137 16 16 13.3137 16 10C16 6.68629 13.3137 4 10 4C7.5 4 5.5 5.5 4.5 7.5M4 4V7.5H7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Try Again
+        </a>
+    </div>
+
+    <script>
+        window.addEventListener('online', () => {
+            console.log('Connection restored');
+            window.location.reload();
+        });
+
+        if (navigator.onLine) {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
