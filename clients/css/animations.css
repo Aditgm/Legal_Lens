@@ -1,0 +1,305 @@
+
+* {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logo-image {
+    height: 70px;
+    width: auto;
+    display: block;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    margin-right: 0;
+}
+
+[data-theme="dark"] .logo-image {
+    filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
+}
+
+.logo:hover .logo-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.logo:hover .logo-image {
+    transform: scale(1.05);
+}
+
+.nav-links a {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.nav-links a:hover {
+    transform: translateY(-2px);
+}
+
+/* Login Button Styling */
+.btn-login {
+    padding: 0.5rem 1.5rem !important;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    background: transparent;
+    color: white !important;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-login:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .btn-login {
+    border-color: rgba(159, 122, 234, 0.5);
+    color: #9f7aea !important;
+}
+
+[data-theme="dark"] .btn-login:hover {
+    background: rgba(159, 122, 234, 0.1);
+    border-color: #9f7aea;
+}
+
+/* Enhanced Button Animations */
+.btn-primary, .btn-secondary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before,
+.btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:hover::before,
+.btn-secondary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    transform: scale(0.95);
+}
+
+.about-card,
+.resource-item,
+.floating-card {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-card:hover,
+.resource-item:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(103, 58, 183, 0.2);
+}
+
+.about-card:hover .card-icon-large,
+.floating-card:hover .card-icon {
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 4px 8px rgba(103, 58, 183, 0.3));
+}
+
+.card-icon,
+.card-icon-large {
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(103, 58, 183, 0.15);
+}
+
+.stat-item {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.stat-item:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.stat-item:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stat-item:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+section {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resource-number {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.resource-item:hover .resource-number {
+    transform: scale(1.2) rotate(10deg);
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+.btn svg {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn:hover svg {
+    transform: translateX(4px);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+    transform: scale(1.1);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+}
+
+.toast {
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+button[type="submit"] {
+    position: relative;
+    overflow: hidden;
+}
+
+button[type="submit"]::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+button[type="submit"]:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+svg {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+*:focus-visible {
+    outline: 2px solid #673ab7;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+* {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+}
