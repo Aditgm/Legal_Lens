@@ -1,0 +1,44 @@
+{
+  "name": "legal-lens",
+  "version": "1.0.0",
+  "description": "A project focused on women's safety, providing legal resources and chat functionalities with AI-powered assistance.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "@huggingface/inference": "^4.13.9",
+    "@langchain/community": "^1.1.4",
+    "@langchain/core": "^1.1.15",
+    "@langchain/openai": "^1.2.2",
+    "@langchain/pinecone": "^1.0.1",
+    "@langchain/textsplitters": "^1.0.1",
+    "@pinecone-database/pinecone": "^2.0.0",
+    "@xenova/transformers": "^2.17.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.0",
+    "nodemailer": "^7.0.12",
+    "ollama": "^0.6.3",
+    "pdf-parse": "^1.1.1",
+    "pdfkit": "^0.17.2",
+    "translate-google": "^1.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "legal-assistance",
+    "women-safety",
+    "posh-act",
+    "ai-chatbot",
+    "vector-database"
+  ],
+  "author": "",
+  "license": "MIT"
+}
