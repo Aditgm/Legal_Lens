@@ -24,7 +24,7 @@
 ### 🏠 Homepage - Beautiful & Accessible
 
 <!-- Replace this URL with your actual screenshot -->
-![Homepage Preview](https://via.placeholder.com/900x500/667eea/ffffff?text=Add+Your+Homepage+Screenshot+Here)
+![Homepage Preview](clients/assets/images/homepage.png)
 
 *Clean, modern interface designed with women's safety as the priority*
 
