@@ -1,6 +1,6 @@
 const { Pinecone } = require("@pinecone-database/pinecone");
 const { pipeline } = require("@xenova/transformers");
-const { Ollama } = require("ollama");
+const Groq = require('groq-sdk');
 const path = require("path");
 const dotenv = require("dotenv");
 const { translateToEnglish, translateFromEnglish, SUPPORTED_LANGUAGES } = require('../services/translationService');
@@ -8,7 +8,9 @@ const { generateFIRFromChat } = require('../services/firGenerator');
 const { sendFIREmail } = require('../services/emailService');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+
 dotenv.config({ path: path.join(__dirname, '../.env') });
+
 if (!process.env.PINECONE_API_KEY) {
   console.error("Environment variables loaded from:", path.join(__dirname, '../.env'));
   console.error("Available env vars:", Object.keys(process.env).filter(k => k.includes('PINECONE')));
@@ -21,13 +23,22 @@ const pinecone = new Pinecone({
 
 const index = pinecone.Index(process.env.PINECONE_INDEX || "legallens");
 
-const ollama = new Ollama({ host: 'http://localhost:11434' });
+if (!process.env.GROQ_API_KEY) {
+  throw new Error("GROQ_API_KEY is not set in environment variables");
+}
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 let embeddingPipeline = null;
+
+// Simple response cache (in-memory)
 const responseCache = new Map();
 const CACHE_MAX_SIZE = 50;
-const CACHE_TTL = 1000 * 60 * 30; 
-const chatHistories = new Map(); 
+const CACHE_TTL = 1000 * 60 * 30; // 30 minutes
+
+// Chat history storage (in-memory) - for FIR generation
+const chatHistories = new Map(); // userId -> [{role, text, timestamp}]
 const HISTORY_MAX_MESSAGES = 100;
 
 function addToChatHistory(userId, role, text) {
@@ -77,6 +88,8 @@ function getCachedResponse(message) {
 
 function setCachedResponse(message, response) {
   const key = getCacheKey(message);
+  
+  // Simple LRU: remove oldest if cache is full
   if (responseCache.size >= CACHE_MAX_SIZE) {
     const firstKey = responseCache.keys().next().value;
     responseCache.delete(firstKey);
@@ -112,6 +125,8 @@ const ChatController = {
 
       console.log('📥 Received query:', message);
       const userLanguage = language || 'en';
+
+      // Store user message in history
       addToChatHistory(userId, 'user', message);
 
       // Translate to English for processing
@@ -121,6 +136,7 @@ const ChatController = {
       // Check cache first (using English query)
       const cachedResponse = getCachedResponse(englishQuery);
       if (cachedResponse) {
+        // Translate cached response back to user's language
         const translatedResponse = await translateFromEnglish(cachedResponse, detectedLanguage);
         return res.status(200).json({ 
           response: translatedResponse,
@@ -162,23 +178,26 @@ User question: ${englishQuery}
 Provide a clear, helpful, and empathetic response based on the context above. If the context doesn't fully answer the question, provide what you can and suggest the user ask for more specific information. Keep your response concise and actionable.`;
 
         try {
-          const llamaResponse = await ollama.chat({
-            model: 'llama3.2:1b',
-            messages: [{ role: 'user', content: prompt }],
-            stream: false,
-            options: {
-              temperature: 0.3,
-              num_predict: 500,
-              top_k: 20,
-              top_p: 0.8
-            }
+          console.log('🤖 Generating response with Groq Llama...');
+          
+          const llamaResponse = await groq.chat.completions.create({
+            messages: [{
+              role: 'user',
+              content: prompt
+            }],
+            model: 'llama-3.3-70b-versatile',
+            temperature: 0.3,
+            max_tokens: 500,
+            top_p: 0.8
           });
           
-          response = llamaResponse.message.content;
-          console.log('✅ Llama response generated');
+          response = llamaResponse.choices[0].message.content;
+          console.log('✅ Groq Llama response generated');
           
           // Cache the English response
           setCachedResponse(englishQuery, response);
+          
+          // Translate response back to user's language
           response = await translateFromEnglish(response, detectedLanguage);
         } catch (llamaError) {
           console.error('⚠️ Llama error, falling back to context:', llamaError.message);
@@ -189,6 +208,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
         response = "I apologize, but I couldn't find specific information about that in the POSH Act or IPC documentation. Please try rephrasing your question or ask about workplace harassment, complaint procedures, women's rights, or criminal law provisions.";
         response = await translateFromEnglish(response, detectedLanguage);
       }
+
+      // Store assistant response in history
       addToChatHistory(userId, 'assistant', response);
 
       res.status(200).json({ 
@@ -208,6 +229,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       });
     }
   },
+
+  // Streaming endpoint for real-time responses
   async streamMessage(req, res) {
     try {
       const { message, language, userId = 'default' } = req.body;
@@ -253,6 +276,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
 
       // Generate embedding for the query (in English)
       const queryEmbedding = await generateEmbedding(englishQuery);
+
+      // Search Pinecone for similar content
       const queryResponse = await index.query({
         vector: queryEmbedding,
         topK: 3,
@@ -260,13 +285,15 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       });
 
       console.log('🔍 Found', queryResponse.matches.length, 'matches');
+
+      // Extract relevant context from matches
       const context = queryResponse.matches
         .map(match => match.metadata?.pageContent || match.metadata?.text || '')
         .filter(text => text.length > 0)
         .join('\n\n');
 
       if (context.length > 0) {
-        console.log('🤖 Streaming response with Llama...');
+        console.log('🤖 Streaming response with Groq Llama 3.3...');
         
         const prompt = `You are a legal assistant specialized in women's safety, the POSH Act (Prevention of Sexual Harassment at Workplace), and Indian Penal Code (IPC) sections related to women's safety.
 
@@ -280,25 +307,26 @@ Provide a clear, helpful, and empathetic response based on the context above. If
         let fullResponse = '';
 
         try {
-          const stream = await ollama.chat({
-            model: 'llama3.2:1b',
+          const stream = await groq.chat.completions.create({
+            model: 'llama-3.3-70b-versatile',
             messages: [{ role: 'user', content: prompt }],
             stream: true,
-            options: {
-              temperature: 0.3,
-              num_predict: 500,
-              top_k: 20,
-              top_p: 0.8
-            }
+            temperature: 0.3,
+            max_tokens: 500,
+            top_p: 0.8
           });
 
           for await (const chunk of stream) {
-            const token = chunk.message.content;
-            fullResponse += token;
+            const content = chunk.choices[0].delta?.content || '';
+            fullResponse += content;
           }
 
           console.log('✅ Streaming complete');
+          
+          // Cache the English response
           setCachedResponse(englishQuery, fullResponse);
+          
+          // Translate full response to user's language
           const translatedResponse = await translateFromEnglish(fullResponse, detectedLanguage);
           
           // Store assistant response in history
@@ -345,6 +373,7 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       const history = getChatHistory(userId);
       
       if (history.length === 0) {
+        // Return welcome message if no history
         const messages = [
           { 
             role: "assistant", 
@@ -366,6 +395,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       const { userId = 'default', previewOnly = false } = req.body;
       
       console.log('📝 Generating FIR for user:', userId, previewOnly ? '(Preview Mode)' : '');
+      
+      // Get chat history
       const chatHistory = getChatHistory(userId);
       
       if (chatHistory.length < 2) {
@@ -373,10 +404,15 @@ Provide a clear, helpful, and empathetic response based on the context above. If
           error: "Insufficient conversation history. Please chat more about the incident before generating FIR." 
         });
       }
+
+      // Get language from request (default to English)
       const language = req.body.language || 'en';
+
+      // Generate FIR PDF with language support
       const result = await generateFIRFromChat(chatHistory, userId, language, previewOnly);
 
       if (previewOnly) {
+        // Only return extracted details without PDF
         res.status(200).json({
           success: true,
           message: 'FIR details extracted successfully',
@@ -384,6 +420,7 @@ Provide a clear, helpful, and empathetic response based on the context above. If
           language: result.language
         });
       } else {
+        // Return PDF download info
         res.status(200).json({
           success: true,
           message: `FIR draft generated successfully in ${language === 'hi' ? 'Hindi' : 'English'}`,
@@ -466,15 +503,23 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       if (!fs.existsSync(regularFont)) {
         console.warn(`Font not found: ${regularFont}, using default`);
       }
+
+      // Create PDF document
       const doc = new PDFDocument({ margin: 50 });
       const filename = `FIR_${userId}_${Date.now()}.pdf`;
       const filePath = path.join(__dirname, '../data', filename);
+
+      // Ensure data directory exists
       const dataDir = path.join(__dirname, '../data');
       if (!fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir, { recursive: true });
       }
+
+      // Pipe PDF to file
       const writeStream = fs.createWriteStream(filePath);
       doc.pipe(writeStream);
+
+      // Register fonts
       try {
         if (fs.existsSync(regularFont)) {
           doc.registerFont('Regular', regularFont);
@@ -485,8 +530,11 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       } catch (fontError) {
         console.warn('Font registration error:', fontError.message);
       }
+
+      // Add content to PDF
       const useCustomFonts = fs.existsSync(regularFont) && fs.existsSync(boldFont);
 
+      // Title
       doc.fontSize(20).font(useCustomFonts ? 'Bold' : 'Helvetica-Bold')
          .text('FIRST INFORMATION REPORT (FIR)', { align: 'center' });
       
@@ -495,6 +543,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
          .text(`Generated: ${new Date().toLocaleString()}`, { align: 'center' });
       
       doc.moveDown(2);
+
+      // Complainant Details
       doc.fontSize(14).font(useCustomFonts ? 'Bold' : 'Helvetica-Bold')
          .text('COMPLAINANT DETAILS');
       doc.moveDown(0.5);
@@ -503,6 +553,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
       doc.text(`Address: ${firDetails.complainant_address || 'Not Provided'}`);
       doc.text(`Phone: ${firDetails.complainant_phone || 'Not Provided'}`);
       doc.moveDown(1.5);
+
+      // Incident Details
       doc.fontSize(14).font(useCustomFonts ? 'Bold' : 'Helvetica-Bold')
          .text('INCIDENT DETAILS');
       doc.moveDown(0.5);
@@ -553,6 +605,8 @@ Provide a clear, helpful, and empathetic response based on the context above. If
 
       // Finalize PDF
       doc.end();
+
+      // Wait for file to be written
       await new Promise((resolve, reject) => {
         writeStream.on('finish', resolve);
         writeStream.on('error', reject);
@@ -576,10 +630,12 @@ Provide a clear, helpful, and empathetic response based on the context above. If
 
   async emailFIR(req, res) {
     try {
+      // Email service disabled
       return res.status(503).json({ 
         error: "Email service is not configured",
         message: "Please use the Download PDF option instead"
       });
+
 
     } catch (error) {
       console.error("❌ Error emailing FIR:", error);
