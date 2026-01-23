@@ -22,8 +22,6 @@
 <div align="center">
 
 ### 🏠 Homepage - Beautiful & Accessible
-
-<!-- Replace this URL with your actual screenshot -->
 ![Homepage Preview](clients/assets/images/homepage.png)
 
 *Clean, modern interface designed with women's safety as the priority*
@@ -32,8 +30,7 @@
 
 ### 💬 AI Chat Assistant
 
-<!-- Replace this URL with your actual chat screenshot -->
-![Chat Interface](https://via.placeholder.com/900x500/764ba2/ffffff?text=Add+Your+Chat+Screenshot+Here)
+![Chat Interface](clients/assets/images/imagehat.png)
 
 *Real-time AI assistance powered by Llama 3.3 70B with multi-language support*
 
