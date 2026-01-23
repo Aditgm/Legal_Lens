@@ -30,7 +30,7 @@
 
 ### 💬 AI Chat Assistant
 
-![Chat Interface](clients/assets/images/imagehat.png)
+![Chat Interface](clients/assets/images/imagechat.png)
 
 *Real-time AI assistance powered by Llama 3.3 70B with multi-language support*
 
