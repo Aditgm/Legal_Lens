@@ -1,7 +1,5 @@
-
 const CACHE_NAME = 'legal-lens-v1.0.1';
 const RUNTIME_CACHE = 'legal-lens-runtime';
-
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -22,6 +20,8 @@ const PRECACHE_ASSETS = [
   '/manifest.json',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
 ];
+
+// Install event - cache critical assets
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker...');
   
@@ -38,6 +38,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating service worker...');
   
@@ -57,11 +58,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Fetch event - serve from cache with network fallback
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
+  // Skip cross-origin requests
   if (url.origin !== location.origin) {
+    // For fonts and external resources, use cache-first strategy
     if (request.destination === 'font' || url.hostname.includes('fonts')) {
       event.respondWith(
         caches.match(request).then((response) => {
@@ -76,10 +80,13 @@ self.addEventListener('fetch', (event) => {
     }
     return;
   }
+
+  // API requests - network first, cache fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(request)
         .then((response) => {
+          // Clone the response before caching
           const responseClone = response.clone();
           caches.open(RUNTIME_CACHE).then((cache) => {
             cache.put(request, responseClone);
@@ -103,6 +110,8 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
+
+  // HTML, CSS, JS - cache first, network fallback
   if (
     request.destination === 'document' ||
     request.destination === 'style' ||
@@ -132,6 +141,7 @@ self.addEventListener('fetch', (event) => {
               });
             })
             .catch(() => {
+              // If offline and HTML request, return offline page
               if (request.destination === 'document') {
                 return caches.match('/index.html');
               }
@@ -141,6 +151,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Images and other assets - cache first
   event.respondWith(
     caches.match(request)
       .then((response) => {
@@ -152,6 +163,7 @@ self.addEventListener('fetch', (event) => {
         });
       })
       .catch(() => {
+        // Return a placeholder for failed image loads
         if (request.destination === 'image') {
           return new Response(
             '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="#ddd" width="200" height="200"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" fill="#999">Offline</text></svg>',
@@ -195,6 +207,8 @@ self.addEventListener('push', (event) => {
     self.registration.showNotification(title, options)
   );
 });
+
+// Notification click handler
 self.addEventListener('notificationclick', (event) => {
   console.log('[SW] Notification clicked:', event.action);
   
@@ -206,11 +220,13 @@ self.addEventListener('notificationclick', (event) => {
     event.waitUntil(
       clients.matchAll({ type: 'window', includeUncontrolled: true })
         .then((clientList) => {
+          // If a window is already open, focus it
           for (const client of clientList) {
             if (client.url === urlToOpen && 'focus' in client) {
               return client.focus();
             }
           }
+          // Otherwise, open a new window
           if (clients.openWindow) {
             return clients.openWindow(urlToOpen);
           }
@@ -219,6 +235,7 @@ self.addEventListener('notificationclick', (event) => {
   }
 });
 
+// Message handler for communication with pages
 self.addEventListener('message', (event) => {
   console.log('[SW] Message received:', event.data);
   
@@ -234,12 +251,18 @@ self.addEventListener('message', (event) => {
     );
   }
 });
+
+// Helper functions
 async function syncStories() {
+  // Implement story sync logic
   console.log('[SW] Syncing stories...');
+  // This would sync offline-created stories to server
 }
 
 async function syncComments() {
+  // Implement comment sync logic
   console.log('[SW] Syncing comments...');
+  // This would sync offline-created comments to server
 }
 
 console.log('[SW] Service Worker loaded');
