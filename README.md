@@ -47,7 +47,7 @@
 </td>
 <td width="50%">
 
-![Dark Mode](https://via.placeholder.com/400x300/1e293b/f5f7fa?text=Dark+Mode)
+![Dark Mode](clients/assets/images/dark.png)
 
 </td>
 </tr>
