@@ -2,12 +2,12 @@
   "name": "Legal Lens - Women's Safety Legal Assistant",
   "short_name": "Legal Lens",
   "description": "AI-powered legal assistance for women's safety, POSH Act compliance, and legal rights",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#673ab7",
   "orientation": "portrait-primary",
-  "scope": "/",
+  "scope": "./",
   "icons": [
     {
       "src": "assets/images/icon-72x72.png",
