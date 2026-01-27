@@ -1,30 +1,31 @@
 (function() {
   'use strict';
+
   let deferredPrompt;
   let isStandalone = false;
   if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     isStandalone = true;
     console.log('[PWA] Running in standalone mode');
   }
-
-  // Register Service Worker
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+      const swPath = window.location.pathname.includes('/Legal_Lens/') ? '/Legal_Lens/sw.js' : '/sw.js';
       navigator.serviceWorker
-        .register('/sw.js')
+        .register(swPath)
         .then((registration) => {
           console.log('[PWA] Service Worker registered:', registration.scope);
+
+          // Check for updates periodically
           setInterval(() => {
             registration.update();
-          }, 60000);
-
-          // Handle updates
+          }, 60000); 
           registration.addEventListener('updatefound', () => {
             const newWorker = registration.installing;
             console.log('[PWA] New Service Worker found');
 
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New service worker available
                 showUpdateNotification();
               }
             });
@@ -33,23 +34,26 @@
         .catch((error) => {
           console.error('[PWA] Service Worker registration failed:', error);
         });
-
-      // Listen for controlling service worker changes
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         console.log('[PWA] New Service Worker activated');
         window.location.reload();
       });
     });
   }
-
-  // Install
   window.addEventListener('beforeinstallprompt', (e) => {
     console.log('[PWA] Install prompt triggered');
+    
+    // Prevent the default browser install prompt
     e.preventDefault();
+    
+    // Store the event for later use
     deferredPrompt = e;
+    
+    // Show custom install button
     showInstallButton();
   });
   function showInstallButton() {
+    // Create install button if it doesn't exist
     let installBtn = document.getElementById('pwa-install-btn');
     
     if (!installBtn) {
@@ -60,6 +64,8 @@
         <span class="install-icon">📱</span>
         <span class="install-text">Install App</span>
       `;
+      
+      // Add styles
       const style = document.createElement('style');
       style.textContent = `
         .pwa-install-btn {
@@ -118,9 +124,13 @@
         }
       `;
       document.head.appendChild(style);
+      
       document.body.appendChild(installBtn);
+      
+      // Add click handler
       installBtn.addEventListener('click', installApp);
     }
+    
     installBtn.style.display = 'flex';
   }
 
@@ -130,19 +140,29 @@
       console.log('[PWA] No install prompt available');
       return;
     }
+
+    // Show the install prompt
     deferredPrompt.prompt();
+    
+    // Wait for user response
     const { outcome } = await deferredPrompt.userChoice;
     console.log(`[PWA] User response: ${outcome}`);
     
     if (outcome === 'accepted') {
       showInstallSuccessMessage();
     }
+    
+    // Clear the deferred prompt
     deferredPrompt = null;
+    
+    // Hide the install button
     const installBtn = document.getElementById('pwa-install-btn');
     if (installBtn) {
       installBtn.style.display = 'none';
     }
   }
+
+  // Show install success message
   function showInstallSuccessMessage() {
     const toast = document.createElement('div');
     toast.className = 'pwa-toast';
@@ -346,6 +366,8 @@
       document.body.appendChild(indicator);
     }
   }
+
+  // Hide offline indicator
   function hideOfflineIndicator() {
     const indicator = document.getElementById('offline-indicator');
     if (indicator) {
@@ -353,20 +375,26 @@
     }
   }
 
+  // Listen for online/offline events
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
+
+  // Check initial status
   updateOnlineStatus();
 
   // App installed handler
   window.addEventListener('appinstalled', () => {
     console.log('[PWA] App installed successfully');
     deferredPrompt = null;
+    
+    // Hide install button
     const installBtn = document.getElementById('pwa-install-btn');
     if (installBtn) {
       installBtn.style.display = 'none';
     }
   });
 
+  // Expose PWA status
   window.LegalLensPWA = {
     isStandalone,
     isOnline: navigator.onLine,
