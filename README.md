@@ -42,7 +42,7 @@
 <tr>
 <td width="50%">
 
-![Light Mode](https://via.placeholder.com/400x300/f5f7fa/1e293b?text=Light+Mode)
+![Light Mode](clients/assets/images/light.png)
 
 </td>
 <td width="50%">
