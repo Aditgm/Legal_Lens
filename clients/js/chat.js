@@ -4,8 +4,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendButton = document.getElementById("send-button");
   const languageSelector = document.getElementById("language-selector");
   const voiceButton = document.getElementById("voice-button");
-
-  // Web Speech API for voice input
   let recognition = null;
   let isRecording = false;
 
@@ -46,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.warn('Speech recognition not supported in this browser');
   }
 
-  // Voice button 
+  // Voice button click handler
   voiceButton?.addEventListener('click', () => {
     if (!recognition) {
       appendMessage('assistant', 'Voice input is not supported in your browser. Please use Chrome, Edge, or Safari.');
@@ -57,6 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
       recognition.stop();
     } else {
       const selectedLang = languageSelector.value;
+      
+      // Map language codes to Speech Recognition locale codes
       const langMap = {
         'en': 'en-US',
         'hi': 'hi-IN',
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         'kn': 'kn-IN',
         'ml': 'ml-IN',
         'pa': 'pa-IN',
-        'auto': 'en-US' 
+        'auto': 'en-US' // Default to English for auto-detect
       };
 
       recognition.lang = langMap[selectedLang] || 'en-US';
@@ -82,11 +82,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Load chat history
   loadChatHistory();
 
   // Send message on button click
   sendButton.addEventListener("click", sendMessage);
 
+  // Send message on Enter key
   messageInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter") {
       sendMessage();
@@ -95,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadChatHistory() {
     try {
-      const response = await fetch("http://localhost:5000/api/chat/history");
+      const response = await fetch(`${API_URL}/api/chat/history`);
       const data = await response.json();
       
       if (data.messages && data.messages.length > 0) {
@@ -114,16 +116,18 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (!message) return;
 
+    // Display user message
     appendMessage("user", message);
     messageInput.value = "";
 
+    // Show typing indicator
     const typingId = showTypingIndicator();
 
     try {
       // Use streaming endpoint for real-time responses
       const selectedLanguage = languageSelector.value;
       
-      const response = await fetch("http://localhost:5000/api/chat/stream", {
+      const response = await fetch(`${API_URL}/api/chat/stream`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -135,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }),
       });
 
+      // Remove typing indicator
       removeTypingIndicator(typingId);
 
       if (response.ok) {
@@ -161,6 +166,7 @@ document.addEventListener("DOMContentLoaded", () => {
         chatBox.appendChild(messageDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
 
+        // Read streaming response
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let fullText = '';
@@ -185,6 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   chatBox.scrollTop = chatBox.scrollHeight;
                 }
               } catch (e) {
+                // Skip malformed JSON
               }
             }
           }
@@ -230,6 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function formatResponse(text) {
     // Format text with better styling
     let formatted = text
+      // Bold text with **text**
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       // Bullet points
       .replace(/^- (.+)$/gm, '<li>$1</li>')
@@ -287,6 +295,8 @@ document.addEventListener("DOMContentLoaded", () => {
       indicator.remove();
     }
   }
+
+  // Global variable to store FIR data for modal
   let currentFIRData = null;
 
   // FIR Generation functionality
@@ -294,6 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const firStatus = document.getElementById('fir-status');
   const firLanguage = document.getElementById('fir-language');
 
+  // Language name mapping for better UX
   const languageNames = {
     'en': 'English',
     'hi': 'Hindi',
@@ -321,7 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Step 1: Extraction
       firStatus.textContent = '🔍 Analyzing conversation and extracting FIR details...';
 
-      const response = await fetch('http://localhost:5000/api/chat/generate-fir', {
+      const response = await fetch(`${API_URL}/api/chat/generate-fir`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -329,7 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ 
           userId: 'default',
           language: selectedLanguage,
-          previewOnly: true
+          previewOnly: true  // Just extract, don't generate PDF yet
         })
       });
 
@@ -357,9 +368,10 @@ document.addEventListener("DOMContentLoaded", () => {
           firButton.disabled = false;
           firButton.innerHTML = '📄 Generate FIR Draft';
         }, 3000);
+        // Multilingual success messages
         const successMessages = {
-          'en': `**FIR Draft Generated Successfully!** 📄\n\nYour FIR complaint draft has been created in ${languageName}. Click the button below to download:\n\n[Download FIR PDF](http://localhost:5000${data.downloadUrl})\n\n**Extracted Details:**\n- Incident Type: ${data.details.harassment_type}\n- Date: ${data.details.incident_date}\n- Location: ${data.details.incident_location}\n\n*Note: Please review and complete all details before submitting to authorities.*`,
-          'hi': `**प्राथमिकी (FIR) सफलतापूर्वक तैयार की गई!** 📄\n\nआपकी FIR शिकायत का मसौदा हिंदी में तैयार हो गया है। डाउनलोड करने के लिए नीचे दिए गए बटन पर क्लिक करें:\n\n[FIR PDF डाउनलोड करें](http://localhost:5000${data.downloadUrl})\n\n**निकाले गए विवरण:**\n- घटना का प्रकार: ${data.details.harassment_type}\n- तारीख: ${data.details.incident_date}\n- स्थान: ${data.details.incident_location}\n\n*नोट: कृपया अधिकारियों को सबमिट करने से पहले सभी विवरणों की समीक्षा करें और पूरा करें।*`
+          'en': `**FIR Draft Generated Successfully!** 📄\n\nYour FIR complaint draft has been created in ${languageName}. Click the button below to download:\n\n[Download FIR PDF](${API_URL}${data.downloadUrl})\n\n**Extracted Details:**\n- Incident Type: ${data.details.harassment_type}\n- Date: ${data.details.incident_date}\n- Location: ${data.details.incident_location}\n\n*Note: Please review and complete all details before submitting to authorities.*`,
+          'hi': `**प्राथमिकी (FIR) सफलतापूर्वक तैयार की गई!** 📄\n\nआपकी FIR शिकायत का मसौदा हिंदी में तैयार हो गया है। डाउनलोड करने के लिए नीचे दिए गए बटन पर क्लिक करें:\n\n[FIR PDF डाउनलोड करें](${API_URL}${data.downloadUrl})\n\n**निकाले गए विवरण:**\n- घटना का प्रकार: ${data.details.harassment_type}\n- तारीख: ${data.details.incident_date}\n- स्थान: ${data.details.incident_location}\n\n*नोट: कृपया अधिकारियों को सबमिट करने से पहले सभी विवरणों की समीक्षा करें और पूरा करें।*`
         };
         
         const downloadMessage = successMessages[selectedLanguage] || successMessages['en'];
@@ -367,7 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage('assistant', downloadMessage);
         
         // Auto-download
-        window.open(`http://localhost:5000${data.downloadUrl}`, '_blank');
+        window.open(`${API_URL}${data.downloadUrl}`, '_blank');
         
         setTimeout(() => {
           firStatus.style.display = 'none';
