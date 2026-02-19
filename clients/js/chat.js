@@ -7,6 +7,40 @@ document.addEventListener("DOMContentLoaded", () => {
   let recognition = null;
   let isRecording = false;
 
+  // Determine a per-user identifier so chat history is not shared globally
+  function getUserId() {
+    try {
+      const storedUser =
+        localStorage.getItem("legalLensUser") ||
+        sessionStorage.getItem("legalLensUser");
+
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        if (parsed.email) return parsed.email;
+        if (parsed.name) return parsed.name;
+      }
+    } catch (e) {
+      console.warn("Failed to read stored user for chat id:", e);
+    }
+
+    // Fallback: anonymous but unique per browser
+    try {
+      let anonId = localStorage.getItem("legalLensAnonId");
+      if (!anonId) {
+        anonId = `anon_${Date.now().toString(36)}_${Math.random()
+          .toString(36)
+          .slice(2, 8)}`;
+        localStorage.setItem("legalLensAnonId", anonId);
+      }
+      return anonId;
+    } catch {
+      // Last resort fallback (session-scoped)
+      return `anon_${Date.now().toString(36)}`;
+    }
+  }
+
+  const userId = getUserId();
+
   // Initialize speech recognition if available
   if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -68,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         'kn': 'kn-IN',
         'ml': 'ml-IN',
         'pa': 'pa-IN',
-        'auto': 'en-US' // Default to English for auto-detect
+        'auto': 'en-US' 
       };
 
       recognition.lang = langMap[selectedLang] || 'en-US';
@@ -97,7 +131,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function loadChatHistory() {
     try {
-      const response = await fetch(`${API_URL}/api/chat/history`);
+      const response = await fetch(
+        `${API_URL}/api/chat/history?userId=${encodeURIComponent(userId)}`
+      );
       const data = await response.json();
       
       if (data.messages && data.messages.length > 0) {
@@ -135,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify({ 
           message,
           language: selectedLanguage,
-          userId: 'default'
+          userId
         }),
       });
 
@@ -338,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          userId: 'default',
+          userId,
           language: selectedLanguage,
           previewOnly: true  // Just extract, don't generate PDF yet
         })
